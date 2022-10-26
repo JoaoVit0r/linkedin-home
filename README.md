@@ -1,7 +1,7 @@
 # linkedin-home
-Remake a simple linkedin Home page
+Remake a simple LinkedIn Home page
 
-Made by Joao Vitor e Mayumi (project 1 was with Leonardo)
+Made by João Vitor e Mayumi (project 1 was with Leonardo)
 
 # Getting Started with Create React App
 
