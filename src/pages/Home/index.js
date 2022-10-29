@@ -1,7 +1,37 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Image from "../../assets/logo.svg";
+import { login } from "../../services/auth";
 import "./styles.css";
 
 export function Home() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log("handleSubmit");
+    const payload = {
+      email,
+      password,
+    }
+    login(payload).then((result)=>{
+      console.log(result);
+
+      if ("token" in result) {
+        localStorage.setItem("token", result.token)
+        navigate("/job-list")
+      }
+      if ("error" in result) {
+        setErrorMessage(result.error)
+      }
+    })
+  }
+  const [errorMessage, setErrorMessage] = useState('');
+   
+
   return (
     <>
       <nav className="header">
@@ -86,7 +116,7 @@ export function Home() {
             <h1>Welcome to your professional community</h1>
 
             <div className="sign-in-form-container">
-              <form className="sign-in-form">
+              <form className="sign-in-form" onSubmit={handleSubmit}>
                 <div className="sign-in-form__form-input-container">
                   <div className="input">
                     <input
@@ -97,6 +127,7 @@ export function Home() {
                       name="session_key"
                       placeholder=" "
                       type="text"
+                      onChange={(e)=>setEmail(e.target.value)}
                     />
 
                     <label className="input__label" for="session_key">
@@ -113,6 +144,7 @@ export function Home() {
                       name="session_password"
                       placeholder=" "
                       type="password"
+                      onChange={(e)=>setPassword(e.target.value)}
                     />
 
                     <label className="input__label" for="session_password">
@@ -139,6 +171,9 @@ export function Home() {
                 <button className="sign-in-form__submit-button" type="submit">
                   Sign in
                 </button>
+                <p style={{color: "red"}}>
+                  {errorMessage}
+                </p>
               </form>
             </div>
           </div>
