@@ -1,0 +1,25 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.text {
+    color: black;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.classes-container {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    min-width: 5vw;
+}
+
+.levels-container {
+    display: flex;
+    flex-direction: column;
+}
