@@ -46,12 +46,14 @@ export function Dnd() {
       <div className="levels-container">
         {classLevels.map(({ index, level, features }) => (
           <div className="level-card" key={index}>
-            <p className="text">{level}</p>
-            {features.map(({ index, name }) => (
-              <div className="features-container" key={index}>
-                <p className="text">{name}</p>
-              </div>
-            ))}
+            <p className="text">Level: {level}</p>
+            <div className="feature-container">
+              {features.map(({ index, name }) => (
+                <div className="feature-container" key={index}>
+                  <p className="text">{name}</p>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
