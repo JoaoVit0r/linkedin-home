@@ -7,8 +7,8 @@ export function Router() {
   return (
     <Routes>
       <Route path="/home" element={<Home />} />
-      <Route path="/" element={<PrivateRoute />}>
-        <Route path="job-list" element={<Dnd />} />
+      <Route path="/app/" element={<PrivateRoute />}>
+        <Route path="dnd-list" element={<Dnd />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" />} />
     </Routes>

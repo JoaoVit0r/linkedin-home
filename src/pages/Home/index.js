@@ -22,7 +22,7 @@ export function Home() {
 
       if ("token" in result) {
         localStorage.setItem("token", result.token)
-        navigate("/job-list")
+        navigate("/app/dnd-list")
       }
       if ("error" in result) {
         setErrorMessage(result.error)
