@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Image from "../../assets/logo.svg";
 import { login } from "../../services/auth";
+import { setCookie } from "../../utils/cookies";
 import "./styles.css";
 
 export function Home() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -16,21 +17,22 @@ export function Home() {
     const payload = {
       email,
       password,
-    }
-    login(payload).then((result)=>{
-      console.log(result);
+    };
+    login(payload)
+      .then((result) => {
+        console.log(result);
 
-      if ("token" in result) {
-        localStorage.setItem("token", result.token)
-        navigate("/app/dnd-list")
-      }
-      if ("error" in result) {
-        setErrorMessage(result.error)
-      }
-    })
-  }
-  const [errorMessage, setErrorMessage] = useState('');
-   
+        if ("accessToken" in result) {
+          localStorage.setItem("token", result.accessToken);
+          setCookie("token", result.accessToken);
+          navigate("/app/dnd-list");
+        }
+        if ("message" in result) {
+          setErrorMessage(result.message);
+        }
+      })
+  };
+  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <>
@@ -39,7 +41,7 @@ export function Home() {
           className="logo-link"
           href="/?trk=guest_homepage-basic_nav-header-logo"
         >
-        <img alt="imagem" className="logo" src={Image} />
+          <img alt="imagem" className="logo" src={Image} />
         </a>
         <div className="header-content">
           <ul className="link-list">
@@ -127,7 +129,7 @@ export function Home() {
                       name="session_key"
                       placeholder=" "
                       type="text"
-                      onChange={(e)=>setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
 
                     <label className="input__label" for="session_key">
@@ -144,7 +146,7 @@ export function Home() {
                       name="session_password"
                       placeholder=" "
                       type="password"
-                      onChange={(e)=>setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <label className="input__label" for="session_password">
@@ -171,9 +173,7 @@ export function Home() {
                 <button className="sign-in-form__submit-button" type="submit">
                   Sign in
                 </button>
-                <p style={{color: "red"}}>
-                  {errorMessage}
-                </p>
+                <p style={{ color: "red" }}>{errorMessage}</p>
               </form>
             </div>
           </div>
