@@ -27,8 +27,10 @@ export function Home() {
           setCookie("token", result.accessToken);
           navigate("/app/dnd-list");
         }
-        if ("message" in result) {
-          setErrorMessage(result.message);
+      })
+      .catch((err)=>{
+        if ("message" in err.response.data) {
+          setErrorMessage(err.response.data.message);
         }
       })
   };
