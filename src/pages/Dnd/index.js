@@ -21,7 +21,11 @@ export function Dnd() {
     if (classes.length && selectedClass >= 0 && selectedClass < classes.length) {
       try {
         getClassLevels(classes[selectedClass].index).then((result) => {
-          setClassLevels(result);
+
+          setClassLevels(result.map((level)=>{
+            level.features = level.features.split(";").map((featuresStr, index)=>({index, name: featuresStr}))
+            return level
+          }));
         });
       } catch (error) {
         console.log(error);
