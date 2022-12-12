@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LevelFields } from "../../component/LevelFields";
 import { apiDnd } from "../../services/apiDnd";
-import { getClasses, getClassLevels } from "../../services/dnd";
+import { createClass, getClasses, getClassLevels } from "../../services/dnd";
 import "./styles.css";
 
 export function Dnd() {
@@ -14,6 +14,7 @@ export function Dnd() {
   ]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [count, setCount] = useState(0);
 
   const refImage = useRef(null);
   const refToNewLevels = useRef([...newLevels]);
@@ -35,7 +36,7 @@ export function Dnd() {
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [count]);
 
   useEffect(() => {
     if (
@@ -58,7 +59,7 @@ export function Dnd() {
         console.log(error);
       }
     }
-  }, [classes, selectedClass]);
+  }, [classes, selectedClass, count]);
 
   const handleSelectClass = (idx) => {
     setSelectedClass(idx);
@@ -81,15 +82,26 @@ export function Dnd() {
   async function handleSubmit(e) {
     e.preventDefault()
     
-    console.log("SUBMIT newLevelsAux", {...newLevels});
+    console.log("SUBMIT image", image);
     console.log("SUBMIT refToNewLevels.current", {...refToNewLevels.current});
 
-    // var formData = new FormData();
-    // try {
-    //   refImage.current && (refImage.current.value = "");
-    // } catch (error) {
-    //   setErrorMessage(error);
-    // }
+    try {
+      await createClass({index, name, image, levels: refToNewLevels.current})
+
+      setIndex('')
+      setName('')
+      setImage(null)
+
+      setNewLevels([
+        { index: "0", level: "1", features: "" },
+      ])
+
+      refImage.current && (refImage.current.value = "");
+
+      setCount(new Date().getTime())
+    } catch (error) {
+      setErrorMessage(error);
+    }
   }
 
   const handleLevelFieldChange = (index, levelAux) => {
@@ -101,11 +113,6 @@ export function Dnd() {
 
     refToNewLevels.current[index] = levelAux;
   };
-
-  useEffect(() => {
-    console.log("newLevelsAux", newLevels);
-    console.log("refToNewLevels.current", refToNewLevels.current);
-  }, [newLevels]);
 
   return (
     <div className="container">
@@ -130,7 +137,7 @@ export function Dnd() {
             ref={refImage}
             type="file"
             accept="image/*"
-            onChange={(e) => setImage(e.target.files?.[0])}
+            onChange={(e) => setImage(e.target.files?.item(0) ?? null)}
           />
 
           <button type="button" onClick={handleAddLevel}>
