@@ -8,6 +8,7 @@ import "./styles.css";
 export function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -34,7 +35,6 @@ export function Home() {
         }
       })
   };
-  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <>
