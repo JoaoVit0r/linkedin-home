@@ -99,8 +99,10 @@ export function Dnd() {
       refImage.current && (refImage.current.value = "");
 
       setCount(new Date().getTime())
-    } catch (error) {
-      setErrorMessage(error);
+    } catch (err) {
+      if ("message" in err.response.data) {
+        setErrorMessage(err.response.data.message);
+      }
     }
   }
 

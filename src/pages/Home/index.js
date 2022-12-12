@@ -1,39 +1,76 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Image from "../../assets/logo.svg";
-import { login } from "../../services/auth";
+import { login, signup } from "../../services/auth";
 import { setCookie } from "../../utils/cookies";
 import "./styles.css";
 
 export function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log("handleSubmit");
-    const payload = {
-      email,
-      password,
-    };
-    login(payload)
-      .then((result) => {
-        console.log(result);
+    console.log("handleSubmit", isSignUp, isAdmin);
 
-        if ("accessToken" in result) {
-          localStorage.setItem("token", result.accessToken);
-          setCookie("token", result.accessToken);
-          navigate("/app/dnd-list");
-        }
-      })
-      .catch((err)=>{
-        if ("message" in err.response.data) {
-          setErrorMessage(err.response.data.message);
-        }
-      })
+    if (isSignUp) {
+      const payload = {
+        email,
+        password,
+        role: isAdmin ? "admin" : "user",
+      };
+      signup(payload)
+        .then((result) => {
+          console.log(result);
+
+          login(payload)
+            .then((result) => {
+              console.log(result);
+
+              if ("accessToken" in result) {
+                localStorage.setItem("token", result.accessToken);
+                setCookie("token", result.accessToken);
+                navigate("/app/dnd-list");
+              }
+            })
+            .catch((err) => {
+              if ("message" in err.response.data) {
+                setErrorMessage(err.response.data.message);
+              }
+            });
+        })
+        .catch((err) => {
+          if ("message" in err.response.data) {
+            setErrorMessage(err.response.data.message);
+          }
+        });
+    } else {
+      const payload = {
+        email,
+        password,
+      };
+      login(payload)
+        .then((result) => {
+          console.log(result);
+
+          if ("accessToken" in result) {
+            localStorage.setItem("token", result.accessToken);
+            setCookie("token", result.accessToken);
+            navigate("/app/dnd-list");
+          }
+        })
+        .catch((err) => {
+          if ("message" in err.response.data) {
+            setErrorMessage(err.response.data.message);
+          }
+        });
+    }
   };
 
   return (
@@ -126,7 +163,7 @@ export function Home() {
                     <input
                       className="input__input"
                       autocomplete="username"
-                      required="true"
+                      required
                       id="session_key"
                       name="session_key"
                       placeholder=" "
@@ -143,26 +180,60 @@ export function Home() {
                     <input
                       className="input__input"
                       autocomplete="current-password"
-                      required="true"
+                      required
                       id="session_password"
                       name="session_password"
                       placeholder=" "
-                      type="password"
+                      type={isPasswordHidden?"password":"text"}
                       onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <label className="input__label" for="session_password">
                       Password
                     </label>
-
                     <button
                       className="sign-in-form__password-visibility-toggle-button"
                       aria-label="Show your LinkedIn password"
                       type="button"
+                      onClick={()=>setIsPasswordHidden(!isPasswordHidden)}
                     >
                       Show
                     </button>
+
                   </div>
+                    <div className="input">
+                      <input
+                        className="input__input"
+                        autocomplete="off"
+                        id="session_key"
+                        name="session_key"
+                        defaultChecked={true}
+                        placeholder=" "
+                        type="checkbox"
+                        onChange={(e) => setIsSignUp(e.target.checked)}
+                      />
+
+                      <label className="input__label" for="session_check">
+                        É um cadastro?
+                      </label>
+                    </div>
+
+                    <div className="input">
+                      <input
+                        className="input__input"
+                        autocomplete="off"
+                        id="session_key"
+                        defaultChecked={true}
+                        name="session_key"
+                        placeholder=" "
+                        type="checkbox"
+                        onChange={(e) => setIsAdmin(e.target.checked)}
+                      />
+
+                      <label className="input__label" for="session_check">
+                        É um administrador?
+                      </label>
+                    </div>
                 </div>
 
                 <a
